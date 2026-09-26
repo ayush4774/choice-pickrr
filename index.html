@@ -2,214 +2,659 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Ask the Flames</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Let's Blow Your Choices</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+
 <style>
-  :root{
-    --bg:#0B0B0E; --bg2:#18151B; --blood:#7A2331; --gold:#C9A227; --gold-light:#E4C567;
-    --bone:#EDE6D6; --purple:#4A2E4F; --smoke:#9a9aa0; --dim:#6b6670;
-    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;min-height:100%;background:radial-gradient(ellipse at 50% 20%, #201a22 0%, var(--bg) 65%);color:var(--bone);font-family:'Spectral',serif;}
-  body{display:flex;flex-direction:column;align-items:center;padding:44px 20px 56px;gap:26px;}
-  h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-style:italic;font-size:clamp(30px,6vw,46px);margin:0;color:var(--gold-light);letter-spacing:0.01em;text-align:center;}
-  .sub{color:#a89fae;font-size:15px;margin-top:-14px;text-align:center;max-width:360px;}
+:root{
+  --bg:#0B0B0E;--bg2:#18151B;--blood:#7A2331;--gold:#C9A227;
+  --light:#E4C567;--bone:#EDE6D6;--purple:#4A2E4F;--dim:#6b6670
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;min-height:100%;background:radial-gradient(ellipse at 50% 20%,#201a22,var(--bg) 65%);
+  color:var(--bone);font-family:Spectral,serif
+}
+body{
+  display:flex;flex-direction:column;align-items:center;
+  padding:44px 20px 56px;gap:26px
+}
+h1{
+  font:600 italic clamp(30px,6vw,46px) "Cormorant Garamond";
+  margin:0;color:var(--light);text-align:center
+}
+.sub{
+  color:#a89fae;font-size:15px;margin-top:-14px;
+  text-align:center;max-width:400px
+}
+.altar{
+  display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-end;
+  gap:18px 22px;min-height:150px;width:min(92vw,700px);padding:10px
+}
+.candle{
+  display:flex;flex-direction:column;align-items:center;
+  width:56px;transition:opacity .6s
+}
+.flame-wrap{
+  position:relative;height:26px;display:flex;align-items:flex-end;
+  justify-content:center;margin-bottom:-2px
+}
+.flame{
+  width:13px;height:20px;border-radius:50% 50% 50% 0;
+  background:linear-gradient(160deg,#ffe08a,#ffa23d 55%,#d8532b);
+  transform:rotate(-45deg);
+  box-shadow:0 0 12px 3px #ffa03c8c;
+  animation:flicker 1.8s ease-in-out infinite
+}
+.smoke{
+  position:absolute;bottom:14px;left:50%;width:6px;height:6px;
+  border-radius:50%;background:#999a9a88;opacity:0;
+  transform:translateX(-50%)
+}
+.wick{width:2px;height:6px;background:#3a3230}
+.wax{
+  width:18px;height:56px;background:linear-gradient(#f2e9d6,#d9cdae);
+  border-radius:2px 2px 5px 5px
+}
+.label{
+  margin-top:9px;font-size:11.5px;line-height:1.25;text-align:center;
+  color:#c9c0cc;max-width:66px;font-style:italic;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow:hidden
+}
+.candle.out .flame{animation:none;opacity:0;transform:rotate(-45deg) scaleY(.1)}
+.candle.out .smoke{animation:smoke 1.3s ease-out forwards}
+.candle.out .wax{filter:grayscale(.5) brightness(.75)}
+.candle.out .label{color:var(--dim)}
+.candle.winner .flame{
+  animation:big 1.2s ease-in-out infinite;
+  box-shadow:0 0 26px 8px #ffbe5ad9
+}
+.candle.winner .label{color:var(--light);text-shadow:0 0 10px #e4c56799;font-weight:600}
 
-  .altar{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-end;gap:18px 22px;min-height:150px;width:min(92vw,520px);padding:10px;}
-  .candle{display:flex;flex-direction:column;align-items:center;width:56px;transition:opacity .6s ease;}
-  .flame-wrap{position:relative;height:26px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:-2px;}
-  .flame{width:13px;height:20px;border-radius:50% 50% 50% 0;background:linear-gradient(160deg,#ffe08a,#ffa23d 55%,#d8532b);
-    transform:rotate(-45deg);box-shadow:0 0 12px 3px rgba(255,160,60,.55);
-    animation:flicker 1.8s ease-in-out infinite;transform-origin:bottom center;}
-  .smoke{position:absolute;bottom:14px;left:50%;width:6px;height:6px;border-radius:50%;background:radial-gradient(circle,rgba(154,154,160,.55),rgba(154,154,160,0));
-    opacity:0;transform:translateX(-50%);}
-  .wick{width:2px;height:6px;background:#3a3230;margin:0 auto;}
-  .wax{width:18px;height:56px;background:linear-gradient(#f2e9d6,#d9cdae);border-radius:2px 2px 5px 5px;box-shadow:inset -3px 0 4px rgba(0,0,0,.15);}
-  .label{margin-top:9px;font-size:11.5px;line-height:1.25;text-align:center;color:#c9c0cc;max-width:66px;font-style:italic;
-    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+@keyframes flicker{
+  0%,100%{transform:rotate(-45deg) scale(1)}
+  25%{transform:rotate(-42deg) scale(.94,1.05)}
+  50%{transform:rotate(-47deg) scale(1.04,.96)}
+  75%{transform:rotate(-44deg) scale(.97,1.02)}
+}
+@keyframes big{
+  0%,100%{transform:rotate(-45deg) scale(1.15)}
+  50%{transform:rotate(-46deg) scale(1.3,1.1)}
+}
+@keyframes smoke{
+  0%{opacity:.6;transform:translateX(-50%) scale(.7)}
+  100%{opacity:0;transform:translate(-50%,-34px) scale(1.8)}
+}
 
-  .candle.out .flame{animation:none;opacity:0;transform:rotate(-45deg) scaleY(0.1);}
-  .candle.out .smoke{animation:smokeRise 1.3s ease-out forwards;}
-  .candle.out .wax{filter:grayscale(0.5) brightness(0.75);}
-  .candle.out .label{color:var(--dim);}
+#askBtn{
+  background:linear-gradient(#7A2331,#5c1a25);color:var(--bone);
+  border:1px solid #8f2c39;padding:12px 32px;border-radius:2px;
+  font:600 italic 18px "Cormorant Garamond";cursor:pointer
+}
+#askBtn:disabled{opacity:.5;cursor:default}
 
-  .candle.winner .flame{animation:flickerBig 1.2s ease-in-out infinite;box-shadow:0 0 26px 8px rgba(255,190,90,.85);}
-  .candle.winner .label{color:var(--gold-light);text-shadow:0 0 10px rgba(228,197,103,.6);font-weight:600;}
+.result{
+  min-height:30px;font:600 italic 24px "Cormorant Garamond";
+  text-align:center;color:var(--light);opacity:0;transition:.8s
+}
+.result.show{opacity:1}
 
-  @keyframes flicker{
-    0%,100%{transform:rotate(-45deg) scale(1);}
-    25%{transform:rotate(-42deg) scale(0.94,1.05);}
-    50%{transform:rotate(-47deg) scale(1.04,0.96);}
-    75%{transform:rotate(-44deg) scale(0.97,1.02);}
-  }
-  @keyframes flickerBig{
-    0%,100%{transform:rotate(-45deg) scale(1.15);}
-    50%{transform:rotate(-46deg) scale(1.3,1.1);}
-  }
-  @keyframes smokeRise{
-    0%{opacity:.6;transform:translateX(-50%) translateY(0) scale(.7);}
-    100%{opacity:0;transform:translateX(-50%) translateY(-34px) scale(1.8);}
-  }
-
-  #askBtn{background:linear-gradient(180deg,var(--blood),#5c1a25);color:var(--bone);border:1px solid #8f2c39;
-    padding:12px 32px;border-radius:2px;font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;
-    font-size:18px;letter-spacing:.02em;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.5);}
-  #askBtn:disabled{opacity:.5;cursor:default;}
-  #askBtn:active:not(:disabled){transform:translateY(1px);}
-
-  .result{min-height:30px;font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:24px;text-align:center;color:var(--gold-light);opacity:0;transition:opacity .8s ease;}
-  .result.show{opacity:1;}
-
-  .panel{width:min(90vw,380px);background:var(--bg2);border:1px solid #2c2630;border-radius:4px;padding:20px;position:relative;}
-  .panel::before{content:'';position:absolute;top:8px;left:8px;right:8px;bottom:8px;border:1px solid #241f28;border-radius:2px;pointer-events:none;}
-  .row{display:flex;gap:8px;margin-bottom:14px;}
-  input[type=text]{flex:1;padding:10px 12px;border-radius:2px;border:1px solid #3a3340;background:#120f15;color:var(--bone);font-size:15px;font-family:'Spectral',serif;}
-  input[type=text]:focus{outline:1px solid var(--gold);outline-offset:1px;}
-  button.add{background:var(--purple);color:var(--bone);border:1px solid #5e3d66;border-radius:2px;padding:0 16px;font-weight:500;cursor:pointer;font-size:15px;font-family:'Spectral',serif;}
-  ul#list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;max-height:190px;overflow-y:auto;}
-  ul#list li{display:flex;align-items:center;justify-content:space-between;background:#120f15;border-left:2px solid var(--gold);border-radius:2px;padding:8px 10px;font-size:14.5px;}
-  ul#list li .label2{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  ul#list li button{background:none;border:none;color:#786f80;cursor:pointer;font-size:16px;line-height:1;padding:2px 4px;}
-  ul#list li button:hover{color:var(--blood);}
-  .empty{color:#5e5764;font-size:14px;text-align:center;padding:8px 0;font-style:italic;}
-  .hint{color:#5e5764;font-size:12px;margin-top:10px;text-align:center;font-style:italic;}
+.panel{
+  width:min(90vw,420px);background:var(--bg2);
+  border:1px solid #2c2630;border-radius:4px;padding:20px
+}
+.row{display:flex;gap:8px;margin-bottom:14px}
+input{
+  flex:1;padding:10px 12px;border-radius:2px;border:1px solid #3a3340;
+  background:#120f15;color:var(--bone);font:15px Spectral
+}
+button.add{
+  background:var(--purple);color:var(--bone);border:1px solid #5e3d66;
+  border-radius:2px;padding:0 16px;cursor:pointer
+}
+#list{
+  list-style:none;margin:0;padding:0;display:flex;flex-direction:column;
+  gap:6px;max-height:190px;overflow:auto
+}
+#list li{
+  display:flex;align-items:center;justify-content:space-between;
+  background:#120f15;border-left:2px solid var(--gold);
+  padding:8px 10px;font-size:14.5px
+}
+#list .label2{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#list button{
+  background:none;border:0;color:#786f80;cursor:pointer
+}
+.empty,.hint{
+  color:#5e5764;font-size:13px;text-align:center;font-style:italic
+}
 </style>
 </head>
+
 <body>
 
-<h1>Ask the Flames</h1>
-<p class="sub">Light a candle for each option. Ask the question, and watch which one refuses to go out.</p>
+<h1>Let's Blow Your Choices</h1>
+<p class="sub">
+  Light a candle for each option. Ask the question, and watch which one refuses to go out.
+</p>
 
 <div class="altar" id="altar"></div>
-
 <button id="askBtn">Ask</button>
 <div class="result" id="result"></div>
 
 <div class="panel">
   <div class="row">
-    <input type="text" id="optionInput" placeholder="Add an option…" maxlength="40">
-    <button class="add" id="addBtn">Add</button>
+    <input id="input" placeholder="Add an option…" maxlength="80">
+    <button class="add" id="add">Add</button>
   </div>
   <ul id="list"></ul>
   <div class="hint" id="hint"></div>
 </div>
 
 <script>
-let options = ['Pizza','Tacos','Sushi','Salad'];
-let animating = false;
+const options = [
+"Computer architecture",
+"CPU cache mechanics",
+"Branch prediction",
+"CPU pipelining",
+"Memory hierarchy",
+"Assembly language",
+"Operating-system internals",
+"Process scheduling",
+"Virtual memory",
+"File-system design",
+"Linux internals",
+"Networking fundamentals",
+"TCP congestion control",
+"DNS architecture",
+"HTTP internals",
+"TLS/HTTPS",
+"WebSockets",
+"Reverse proxies",
+"Load balancing",
+"Distributed systems",
+"CAP theorem",
+"Database indexing",
+"B-trees",
+"LSM trees",
+"Database query optimization",
+"Database transactions",
+"MVCC",
+"ACID vs BASE",
+"Distributed databases",
+"Database sharding",
+"Event-driven architecture",
+"Message queues",
+"Redis internals",
+"MongoDB internals",
+"PostgreSQL internals",
+"Graph databases",
+"Vector databases",
+"Compiler design",
+"Garbage collection",
+"Memory allocators",
 
-const altarEl = document.getElementById('altar');
-const listEl = document.getElementById('list');
-const resultEl = document.getElementById('result');
-const hintEl = document.getElementById('hint');
-const askBtn = document.getElementById('askBtn');
+"Neural networks",
+"Backpropagation",
+"Gradient descent",
+"CNN architecture",
+"RNN architecture",
+"LSTM networks",
+"Transformers",
+"Attention mechanisms",
+"Positional encoding",
+"Tokenization",
+"Word embeddings",
+"Vector embeddings",
+"Semantic search",
+"Retrieval-augmented generation",
+"AI agents",
+"Tool calling",
+"Model context windows",
+"LLM inference",
+"Quantization",
+"Model distillation",
+"Fine-tuning",
+"LoRA",
+"Reinforcement learning",
+"RLHF",
+"Diffusion models",
+"Computer vision",
+"Object detection",
+"Speech recognition",
+"Text-to-speech systems",
+"Multimodal AI",
+"AI evaluation",
+"AI hallucinations",
+"AI safety engineering",
+"Prompt injection",
+"Adversarial machine learning",
+"Federated learning",
+"Edge AI",
+"Neuromorphic computing",
+"Quantum computing",
 
-function renderAltar(){
-  altarEl.innerHTML = '';
-  if(options.length === 0){
-    altarEl.innerHTML = '<div class="empty">No candles lit yet — add options below</div>';
-    return;
+"Cryptography",
+"RSA",
+"AES",
+"Elliptic-curve cryptography",
+"Hash functions",
+"Digital signatures",
+"Public-key infrastructure",
+"Zero-knowledge proofs",
+"Password hashing",
+"Authentication protocols",
+"OAuth",
+"JWT security",
+"Session security",
+"Web security",
+"SQL injection",
+"XSS",
+"CSRF",
+"SSRF",
+"Command injection",
+"Path traversal",
+"API security",
+"Rate limiting",
+"Threat modeling",
+"Attack trees",
+"Digital forensics",
+"Malware analysis",
+"Reverse engineering",
+"Network security",
+"Packet analysis",
+"Wireshark",
+"Intrusion detection",
+"Honeypots",
+"Security operations centers",
+"Threat intelligence",
+"Vulnerability management",
+"CVE ecosystem",
+"CVSS scoring",
+"Incident response",
+"Cyber threat hunting",
+
+"Human skeletal anatomy",
+"Muscle anatomy",
+"Joint anatomy",
+"Tendons",
+"Ligaments",
+"Muscle fiber types",
+"Motor units",
+"Neuromuscular adaptation",
+"Muscle hypertrophy",
+"Mechanical tension",
+"Metabolic stress",
+"Muscle protein synthesis",
+"Progressive overload",
+"RPE",
+"RIR",
+"Velocity-based training",
+"Strength programming",
+"Hypertrophy programming",
+"Periodization",
+"Deloading",
+"Fatigue management",
+"Training volume landmarks",
+"Training frequency",
+"Exercise selection",
+"Biomechanics",
+"Moment arms",
+"Torque",
+"Levers in the human body",
+"Center of mass",
+"Force vectors",
+"Squat biomechanics",
+"Bench-press biomechanics",
+"Deadlift biomechanics",
+"Shoulder mechanics",
+"Scapular movement",
+"Hip mechanics",
+"Knee mechanics",
+"Ankle mechanics",
+"Grip biomechanics",
+"Athletic performance testing",
+
+"Energy balance",
+"Basal metabolic rate",
+"TDEE calculations",
+"Thermic effect of food",
+"Protein quality",
+"Amino acids",
+"Leucine signaling",
+"Carbohydrate metabolism",
+"Glycogen",
+"Fat metabolism",
+"Dietary fiber",
+"Gut microbiome",
+"Digestion",
+"Nutrient absorption",
+"Glycemic index",
+"Insulin physiology",
+"Blood glucose regulation",
+"Cholesterol metabolism",
+"Lipoproteins",
+"Omega-3 biology",
+"Vitamin D biology",
+"Iron metabolism",
+"Calcium metabolism",
+"Magnesium physiology",
+"Sodium physiology",
+"Potassium physiology",
+"Hydration science",
+"Electrolytes",
+"Creatine physiology",
+"Caffeine pharmacology",
+"Sleep science",
+"Circadian rhythm",
+"Melatonin biology",
+"Muscle recovery",
+"DOMS",
+"Exercise-induced inflammation",
+"Cardiorespiratory fitness",
+"VO₂ max",
+"Resting heart rate",
+"Evidence-based nutrition",
+
+"Sports biomechanics",
+"Sprint mechanics",
+"Acceleration mechanics",
+"Jump mechanics",
+"Change-of-direction mechanics",
+"Reaction time",
+"Hand-eye coordination",
+"Agility testing",
+"Balance training",
+"Proprioception",
+"Badminton biomechanics",
+"Badminton footwork",
+"Badminton smash mechanics",
+"Badminton racket physics",
+"Tennis biomechanics",
+"Cricket bowling biomechanics",
+"Cricket batting mechanics",
+"Football tactical systems",
+"Basketball spacing",
+"Sports analytics",
+"Expected goals",
+"Player-performance metrics",
+"Sports statistics",
+"Sports psychology",
+"Competitive anxiety",
+"Visualization in sport",
+"Motor learning",
+"Skill acquisition",
+"Reaction training",
+"Recovery monitoring",
+"Sports nutrition",
+"Injury prevention",
+"Training load monitoring",
+"Talent identification",
+"Sports event operations",
+
+"Cognitive biases",
+"Behavioral economics",
+"Game theory",
+"Prospect theory",
+"Loss aversion",
+"Confirmation bias",
+"Availability heuristic",
+"Anchoring",
+"Sunk-cost fallacy",
+"Dunning-Kruger effect",
+"Habit formation",
+"Reward systems",
+"Dopamine signaling",
+"Attention science",
+"Memory formation",
+"Spaced repetition",
+"Active recall",
+"Forgetting curves",
+"Metacognition",
+"Decision theory",
+"Critical thinking",
+"Bayesian reasoning",
+"Probability intuition",
+"Scientific skepticism",
+"Persuasion psychology",
+"Negotiation psychology",
+"Social psychology",
+"Group dynamics",
+"Conformity",
+"Social proof",
+"Status signaling",
+"First impressions",
+"Nonverbal communication",
+"Linguistic framing",
+"Consumer psychology",
+
+"Product management",
+"Product-market fit",
+"User research",
+"UX psychology",
+"Product analytics",
+"A/B testing",
+"Growth loops",
+"Network effects",
+"Platform economics",
+"Marketplace design",
+"SaaS economics",
+"Startup finance",
+"Unit economics",
+"Customer acquisition cost",
+"Lifetime value",
+"Churn analysis",
+"Pricing psychology",
+"Freemium economics",
+"Subscription economics",
+"Financial statements",
+"Balance sheets",
+"Income statements",
+"Cash-flow statements",
+"Company valuation",
+"Discounted cash flow",
+"Compound interest",
+"Index investing",
+"Bonds",
+"Inflation mechanics",
+"Indian taxation basics",
+
+"Astronomy",
+"Stellar evolution",
+"Black holes",
+"Neutron stars",
+"Gravitational waves",
+"Exoplanets",
+"Cosmology",
+"Dark matter",
+"Dark energy",
+"Astrobiology",
+"Planetary science",
+"Asteroid dynamics",
+"Meteorites",
+"Geology",
+"Plate tectonics",
+"Volcanology",
+"Seismology",
+"Oceanography",
+"Atmospheric science",
+"Weather systems",
+"Mycology",
+"Entomology",
+"Evolutionary biology",
+"Animal behavior",
+"Human evolution",
+
+"Ancient Indian civilizations",
+"Indus Valley Civilization",
+"Ancient Indian mathematics",
+"Indian astronomical history",
+"History of Indian technology",
+"Maratha history",
+"Deccan history",
+"Pune's history",
+"History of computing",
+"History of the internet",
+"History of cryptography",
+"History of artificial intelligence",
+"History of medicine",
+"History of bodybuilding",
+"History of the Olympics",
+"Military logistics",
+"Historical cartography",
+"Map projections",
+"Geopolitics through geography",
+"How borders are created",
+
+"Linguistics",
+"Phonetics",
+"IPA pronunciation",
+"Etymology",
+"Writing-system evolution",
+"Sign languages",
+"Morse code",
+"Braille",
+"Mental calculation",
+"Memory palaces",
+"Speed reading science",
+"Chess openings",
+"Chess endgames",
+"Poker mathematics",
+"Probability puzzles",
+"Cartography",
+"Forensic science",
+"Fingerprint analysis",
+"How lie detectors actually work",
+"How magic tricks exploit human perception"
+];
+
+let active = [...options];
+let busy = false;
+
+const $ = id => document.getElementById(id);
+const altar = $("altar"), list = $("list"), result = $("result"),
+      input = $("input"), add = $("add"), ask = $("askBtn");
+
+function render(){
+  altar.replaceChildren();
+  list.replaceChildren();
+
+  if(!active.length){
+    const emptyAltar = document.createElement("div");
+    emptyAltar.className = "empty";
+    emptyAltar.textContent = "No candles lit yet";
+    altar.appendChild(emptyAltar);
+
+    const emptyList = document.createElement("li");
+    emptyList.className = "empty";
+    emptyList.textContent = "No options yet";
+    list.appendChild(emptyList);
   }
-  options.forEach((opt)=>{
-    const c = document.createElement('div');
-    c.className = 'candle';
-    const delay = (Math.random()*2).toFixed(2);
-    const dur = (1.5 + Math.random()*0.8).toFixed(2);
-    c.innerHTML = `
-      <div class="flame-wrap">
-        <div class="flame" style="animation-delay:-${delay}s;animation-duration:${dur}s"></div>
-        <div class="smoke"></div>
-      </div>
-      <div class="wick"></div>
-      <div class="wax"></div>
-      <div class="label"></div>`;
-    c.querySelector('.label').textContent = opt;
-    altarEl.appendChild(c);
+
+  active.forEach((x,i)=>{
+    const candle = document.createElement("div");
+    candle.className = "candle";
+    candle.dataset.i = i;
+
+    const flameWrap = document.createElement("div");
+    flameWrap.className = "flame-wrap";
+    const flame = document.createElement("div");
+    flame.className = "flame";
+    flame.style.animationDelay = `-${Math.random()*2}s`;
+    const smoke = document.createElement("div");
+    smoke.className = "smoke";
+    flameWrap.append(flame, smoke);
+
+    const wick = document.createElement("div");
+    wick.className = "wick";
+    const wax = document.createElement("div");
+    wax.className = "wax";
+    const label = document.createElement("div");
+    label.className = "label";
+    label.textContent = x;
+    candle.append(flameWrap, wick, wax, label);
+    altar.appendChild(candle);
+
+    const item = document.createElement("li");
+    const itemLabel = document.createElement("span");
+    itemLabel.className = "label2";
+    itemLabel.textContent = x;
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.textContent = "✕";
+    remove.setAttribute("aria-label", `Remove ${x}`);
+    remove.addEventListener("click", () => removeOption(i));
+    item.append(itemLabel, remove);
+    list.appendChild(item);
   });
+
+  $("hint").textContent = active.length < 2 && active.length
+    ? "Add at least one more option to ask" : "";
+
+  ask.disabled = active.length < 2;
 }
 
-function renderList(){
-  listEl.innerHTML = '';
-  if(options.length === 0){
-    listEl.innerHTML = '<li class="empty" style="justify-content:center;border-left:none;">No options yet — add a few above</li>';
-  }
-  options.forEach((opt,i)=>{
-    const li = document.createElement('li');
-    const label = document.createElement('span');
-    label.className = 'label2';
-    label.textContent = opt;
-    const del = document.createElement('button');
-    del.textContent = '✕';
-    del.setAttribute('aria-label','Remove '+opt);
-    del.onclick = ()=>{ options.splice(i,1); renderList(); renderAltar(); resetResult(); };
-    li.appendChild(label); li.appendChild(del);
-    listEl.appendChild(li);
-  });
-  hintEl.textContent = options.length < 2 && options.length > 0 ? 'Add at least one more option to ask' : '';
-  askBtn.disabled = options.length < 2;
+function removeOption(i){
+  if(busy)return;
+  active.splice(i,1);
+  reset();
+  render();
 }
 
-function resetResult(){
-  resultEl.classList.remove('show');
-  resultEl.textContent = '';
+function reset(){
+  result.classList.remove("show");
+  result.textContent = "";
 }
 
 function addOption(){
-  const input = document.getElementById('optionInput');
-  const val = input.value.trim();
-  if(!val) return;
-  options.push(val); input.value = '';
-  renderList(); renderAltar(); resetResult();
+  const x = input.value.trim();
+  if(!x)return;
+  active.push(x);
+  input.value = "";
+  reset();
+  render();
   input.focus();
 }
 
-document.getElementById('addBtn').onclick = addOption;
-document.getElementById('optionInput').addEventListener('keydown', e=>{ if(e.key === 'Enter') addOption(); });
+add.onclick = addOption;
+input.onkeydown = e => e.key === "Enter" && addOption();
 
-function shuffle(arr){
-  const a = arr.slice();
-  for(let i=a.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [a[i],a[j]] = [a[j],a[i]];
-  }
-  return a;
-}
+ask.onclick = ()=>{
+  if(busy || active.length<2)return;
 
-askBtn.addEventListener('click', ()=>{
-  if(animating || options.length < 2) return;
-  animating = true;
-  askBtn.disabled = true;
-  resetResult();
+  busy = true;
+  ask.disabled = true;
+  reset();
 
-  const candles = Array.from(altarEl.querySelectorAll('.candle'));
-  candles.forEach(c => c.classList.remove('out','winner'));
+  const candles = [...altar.children];
+  const winner = Math.floor(Math.random()*active.length);
+  const losers = candles.map((_,i)=>i).filter(i=>i!==winner);
 
-  const n = options.length;
-  const winner = Math.floor(Math.random()*n);
-  const order = shuffle([...Array(n).keys()].filter(i => i !== winner));
+  /* Eliminate candles in batches instead of one every 600ms.
+     This keeps 365 choices playable. */
+  const batches = Math.min(12, losers.length);
+  const shuffled = losers.sort(()=>Math.random()-.5);
+  const size = Math.ceil(shuffled.length/batches);
 
-  const suspense = 900;
-  const gap = 600;
-  order.forEach((idx,i)=>{
-    setTimeout(()=>{ candles[idx].classList.add('out'); }, suspense + i*gap);
+  shuffled.forEach((i,n)=>{
+    setTimeout(
+      ()=>candles[i]?.classList.add("out"),
+      400 + Math.floor(n/size)*350
+    );
   });
 
-  const totalDelay = suspense + order.length*gap + 500;
   setTimeout(()=>{
-    candles[winner].classList.add('winner');
-    resultEl.textContent = options[winner];
-    resultEl.classList.add('show');
-    animating = false;
-    askBtn.disabled = options.length < 2;
-  }, totalDelay);
-});
+    candles[winner]?.classList.add("winner");
+    result.textContent = active[winner];
+    result.classList.add("show");
+    busy = false;
+    ask.disabled = false;
+  },400+batches*350+700);
+};
 
-renderList();
-renderAltar();
+render();
 </script>
 </body>
 </html>
