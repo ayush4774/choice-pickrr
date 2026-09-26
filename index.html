@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ask the Flames</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0B0E; --bg2:#18151B; --blood:#7A2331; --gold:#C9A227; --gold-light:#E4C567;
+    --bone:#EDE6D6; --purple:#4A2E4F; --smoke:#9a9aa0; --dim:#6b6670;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;min-height:100%;background:radial-gradient(ellipse at 50% 20%, #201a22 0%, var(--bg) 65%);color:var(--bone);font-family:'Spectral',serif;}
+  body{display:flex;flex-direction:column;align-items:center;padding:44px 20px 56px;gap:26px;}
+  h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-style:italic;font-size:clamp(30px,6vw,46px);margin:0;color:var(--gold-light);letter-spacing:0.01em;text-align:center;}
+  .sub{color:#a89fae;font-size:15px;margin-top:-14px;text-align:center;max-width:360px;}
+
+  .altar{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-end;gap:18px 22px;min-height:150px;width:min(92vw,520px);padding:10px;}
+  .candle{display:flex;flex-direction:column;align-items:center;width:56px;transition:opacity .6s ease;}
+  .flame-wrap{position:relative;height:26px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:-2px;}
+  .flame{width:13px;height:20px;border-radius:50% 50% 50% 0;background:linear-gradient(160deg,#ffe08a,#ffa23d 55%,#d8532b);
+    transform:rotate(-45deg);box-shadow:0 0 12px 3px rgba(255,160,60,.55);
+    animation:flicker 1.8s ease-in-out infinite;transform-origin:bottom center;}
+  .smoke{position:absolute;bottom:14px;left:50%;width:6px;height:6px;border-radius:50%;background:radial-gradient(circle,rgba(154,154,160,.55),rgba(154,154,160,0));
+    opacity:0;transform:translateX(-50%);}
+  .wick{width:2px;height:6px;background:#3a3230;margin:0 auto;}
+  .wax{width:18px;height:56px;background:linear-gradient(#f2e9d6,#d9cdae);border-radius:2px 2px 5px 5px;box-shadow:inset -3px 0 4px rgba(0,0,0,.15);}
+  .label{margin-top:9px;font-size:11.5px;line-height:1.25;text-align:center;color:#c9c0cc;max-width:66px;font-style:italic;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+
+  .candle.out .flame{animation:none;opacity:0;transform:rotate(-45deg) scaleY(0.1);}
+  .candle.out .smoke{animation:smokeRise 1.3s ease-out forwards;}
+  .candle.out .wax{filter:grayscale(0.5) brightness(0.75);}
+  .candle.out .label{color:var(--dim);}
+
+  .candle.winner .flame{animation:flickerBig 1.2s ease-in-out infinite;box-shadow:0 0 26px 8px rgba(255,190,90,.85);}
+  .candle.winner .label{color:var(--gold-light);text-shadow:0 0 10px rgba(228,197,103,.6);font-weight:600;}
+
+  @keyframes flicker{
+    0%,100%{transform:rotate(-45deg) scale(1);}
+    25%{transform:rotate(-42deg) scale(0.94,1.05);}
+    50%{transform:rotate(-47deg) scale(1.04,0.96);}
+    75%{transform:rotate(-44deg) scale(0.97,1.02);}
+  }
+  @keyframes flickerBig{
+    0%,100%{transform:rotate(-45deg) scale(1.15);}
+    50%{transform:rotate(-46deg) scale(1.3,1.1);}
+  }
+  @keyframes smokeRise{
+    0%{opacity:.6;transform:translateX(-50%) translateY(0) scale(.7);}
+    100%{opacity:0;transform:translateX(-50%) translateY(-34px) scale(1.8);}
+  }
+
+  #askBtn{background:linear-gradient(180deg,var(--blood),#5c1a25);color:var(--bone);border:1px solid #8f2c39;
+    padding:12px 32px;border-radius:2px;font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;
+    font-size:18px;letter-spacing:.02em;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.5);}
+  #askBtn:disabled{opacity:.5;cursor:default;}
+  #askBtn:active:not(:disabled){transform:translateY(1px);}
+
+  .result{min-height:30px;font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:24px;text-align:center;color:var(--gold-light);opacity:0;transition:opacity .8s ease;}
+  .result.show{opacity:1;}
+
+  .panel{width:min(90vw,380px);background:var(--bg2);border:1px solid #2c2630;border-radius:4px;padding:20px;position:relative;}
+  .panel::before{content:'';position:absolute;top:8px;left:8px;right:8px;bottom:8px;border:1px solid #241f28;border-radius:2px;pointer-events:none;}
+  .row{display:flex;gap:8px;margin-bottom:14px;}
+  input[type=text]{flex:1;padding:10px 12px;border-radius:2px;border:1px solid #3a3340;background:#120f15;color:var(--bone);font-size:15px;font-family:'Spectral',serif;}
+  input[type=text]:focus{outline:1px solid var(--gold);outline-offset:1px;}
+  button.add{background:var(--purple);color:var(--bone);border:1px solid #5e3d66;border-radius:2px;padding:0 16px;font-weight:500;cursor:pointer;font-size:15px;font-family:'Spectral',serif;}
+  ul#list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;max-height:190px;overflow-y:auto;}
+  ul#list li{display:flex;align-items:center;justify-content:space-between;background:#120f15;border-left:2px solid var(--gold);border-radius:2px;padding:8px 10px;font-size:14.5px;}
+  ul#list li .label2{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  ul#list li button{background:none;border:none;color:#786f80;cursor:pointer;font-size:16px;line-height:1;padding:2px 4px;}
+  ul#list li button:hover{color:var(--blood);}
+  .empty{color:#5e5764;font-size:14px;text-align:center;padding:8px 0;font-style:italic;}
+  .hint{color:#5e5764;font-size:12px;margin-top:10px;text-align:center;font-style:italic;}
+</style>
+</head>
+<body>
+
+<h1>Ask the Flames</h1>
+<p class="sub">Light a candle for each option. Ask the question, and watch which one refuses to go out.</p>
+
+<div class="altar" id="altar"></div>
+
+<button id="askBtn">Ask</button>
+<div class="result" id="result"></div>
+
+<div class="panel">
+  <div class="row">
+    <input type="text" id="optionInput" placeholder="Add an option…" maxlength="40">
+    <button class="add" id="addBtn">Add</button>
+  </div>
+  <ul id="list"></ul>
+  <div class="hint" id="hint"></div>
+</div>
+
+<script>
+let options = ['Pizza','Tacos','Sushi','Salad'];
+let animating = false;
+
+const altarEl = document.getElementById('altar');
+const listEl = document.getElementById('list');
+const resultEl = document.getElementById('result');
+const hintEl = document.getElementById('hint');
+const askBtn = document.getElementById('askBtn');
+
+function renderAltar(){
+  altarEl.innerHTML = '';
+  if(options.length === 0){
+    altarEl.innerHTML = '<div class="empty">No candles lit yet — add options below</div>';
+    return;
+  }
+  options.forEach((opt)=>{
+    const c = document.createElement('div');
+    c.className = 'candle';
+    const delay = (Math.random()*2).toFixed(2);
+    const dur = (1.5 + Math.random()*0.8).toFixed(2);
+    c.innerHTML = `
+      <div class="flame-wrap">
+        <div class="flame" style="animation-delay:-${delay}s;animation-duration:${dur}s"></div>
+        <div class="smoke"></div>
+      </div>
+      <div class="wick"></div>
+      <div class="wax"></div>
+      <div class="label"></div>`;
+    c.querySelector('.label').textContent = opt;
+    altarEl.appendChild(c);
+  });
+}
+
+function renderList(){
+  listEl.innerHTML = '';
+  if(options.length === 0){
+    listEl.innerHTML = '<li class="empty" style="justify-content:center;border-left:none;">No options yet — add a few above</li>';
+  }
+  options.forEach((opt,i)=>{
+    const li = document.createElement('li');
+    const label = document.createElement('span');
+    label.className = 'label2';
+    label.textContent = opt;
+    const del = document.createElement('button');
+    del.textContent = '✕';
+    del.setAttribute('aria-label','Remove '+opt);
+    del.onclick = ()=>{ options.splice(i,1); renderList(); renderAltar(); resetResult(); };
+    li.appendChild(label); li.appendChild(del);
+    listEl.appendChild(li);
+  });
+  hintEl.textContent = options.length < 2 && options.length > 0 ? 'Add at least one more option to ask' : '';
+  askBtn.disabled = options.length < 2;
+}
+
+function resetResult(){
+  resultEl.classList.remove('show');
+  resultEl.textContent = '';
+}
+
+function addOption(){
+  const input = document.getElementById('optionInput');
+  const val = input.value.trim();
+  if(!val) return;
+  options.push(val); input.value = '';
+  renderList(); renderAltar(); resetResult();
+  input.focus();
+}
+
+document.getElementById('addBtn').onclick = addOption;
+document.getElementById('optionInput').addEventListener('keydown', e=>{ if(e.key === 'Enter') addOption(); });
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+askBtn.addEventListener('click', ()=>{
+  if(animating || options.length < 2) return;
+  animating = true;
+  askBtn.disabled = true;
+  resetResult();
+
+  const candles = Array.from(altarEl.querySelectorAll('.candle'));
+  candles.forEach(c => c.classList.remove('out','winner'));
+
+  const n = options.length;
+  const winner = Math.floor(Math.random()*n);
+  const order = shuffle([...Array(n).keys()].filter(i => i !== winner));
+
+  const suspense = 900;
+  const gap = 600;
+  order.forEach((idx,i)=>{
+    setTimeout(()=>{ candles[idx].classList.add('out'); }, suspense + i*gap);
+  });
+
+  const totalDelay = suspense + order.length*gap + 500;
+  setTimeout(()=>{
+    candles[winner].classList.add('winner');
+    resultEl.textContent = options[winner];
+    resultEl.classList.add('show');
+    animating = false;
+    askBtn.disabled = options.length < 2;
+  }, totalDelay);
+});
+
+renderList();
+renderAltar();
+</script>
+</body>
+</html>
